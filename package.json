@@ -1,0 +1,29 @@
+{
+  "name": "country-quiz-master",
+  "version": "1.0.0",
+  "description": "![Thumbnail for the Country Quiz coding challenge](./thumbnail.jpg)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firogute/country-quiz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/firogute/country-quiz/issues"
+  },
+  "homepage": "https://github.com/firogute/country-quiz#readme",
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.4.1",
+    "vite": "^6.3.4"
+  }
+}
