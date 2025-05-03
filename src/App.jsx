@@ -84,6 +84,17 @@ function App() {
     setCurrent(index);
   };
 
+  if (questions.length === 0) {
+    return (
+      <div
+        className="min-h-screen bg-cover bg-center flex justify-center items-center text-[#E2E4F3]"
+        style={{ backgroundImage: `url(${bgImage})` }}
+      >
+        <div className="loading-circle"></div>
+      </div>
+    );
+  }
+
   if (quizCompleted) {
     return (
       <div
