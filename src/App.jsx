@@ -55,24 +55,27 @@ function App() {
       setScore((prevScore) => prevScore + 1);
     }
 
-    setUserAnswers((prevAnswers) => [
-      ...prevAnswers,
+    const newAnswers = [
+      ...userAnswers,
       { questionIndex: current, selectedOption, isCorrect },
-    ]);
+    ];
+    setUserAnswers(newAnswers);
+
+    const jumped = current !== lastSequentialIndex;
 
     setTimeout(() => {
-      // Find the next unanswered question after lastSequentialIndex
-      let nextQuestion = lastSequentialIndex;
+      let nextQuestion = jumped ? lastSequentialIndex : current + 1;
+
       while (
         nextQuestion < questions.length &&
-        userAnswers.some((a) => a.questionIndex === nextQuestion)
+        newAnswers.some((a) => a.questionIndex === nextQuestion)
       ) {
         nextQuestion++;
       }
 
       if (nextQuestion < questions.length) {
         setCurrent(nextQuestion);
-        setLastSequentialIndex(nextQuestion);
+        setLastSequentialIndex(jumped ? lastSequentialIndex : nextQuestion);
       }
     }, 500);
   };
@@ -91,7 +94,7 @@ function App() {
         className="min-h-screen bg-cover bg-center flex justify-center items-center text-[#E2E4F3] vietnam-pro"
         style={{ backgroundImage: `url(${bgImage})` }}
       >
-        <div className="quiz-container p-12 rounded-4xl w-full max-w-[64rem]">
+        <div className="quiz-container p-12 rounded-4xl max-w-[64rem]">
           <CompletePage
             score={score}
             totalQuestions={questions.length}
