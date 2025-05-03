@@ -84,10 +84,6 @@ function App() {
     setCurrent(index);
   };
 
-  if (questions.length === 0) {
-    return <div>Loading...</div>;
-  }
-
   if (quizCompleted) {
     return (
       <div
