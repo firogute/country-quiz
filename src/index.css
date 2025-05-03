@@ -1,1 +1,42 @@
+@import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 @import "tailwindcss";
+
+:root {
+  --spacing: 0.25rem;
+  --radius-2xl: 1rem;
+}
+
+.question-numbers li {
+  height: calc(var(--spacing) * 11);
+  width: calc(var(--spacing) * 11);
+  background-color: #393f6e;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.question-numbers li.active {
+  background-image: linear-gradient(to right, #e65895, #bc6be8);
+}
+
+.vietnam-pro {
+  font-family: "Be Vietnam Pro", sans-serif;
+  font-weight: 600;
+}
+
+.answer-options button {
+  justify-content: center;
+  gap: calc(var(--spacing) * 2);
+  border-radius: var(--radius-2xl);
+  padding: calc(var(--spacing) * 6);
+  text-wrap: wrap;
+  background-color: #393f6e;
+  display: flex;
+  transition: all 0.3s ease;
+}
+
+.answer-options button:hover {
+  background-image: linear-gradient(to right, #e65895, #bc6be8);
+  cursor: pointer;
+}
