@@ -12,22 +12,28 @@ function App() {
   const [userAnswers, setUserAnswers] = useState([]);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const fetchQuestion = async () => {
-    const response = await fetch(
-      "https://the-trivia-api.com/v2/questions?limit=10&categories=geography"
-    );
-    const data = await response.json();
+    try {
+      const response = await fetch(
+        "https://the-trivia-api.com/v2/questions?limit=10&categories=geography"
+      );
+      const data = await response.json();
 
-    const formattedQuestions = data.map((item) => ({
-      question: item.question.text,
-      options: [item.correctAnswer, ...item.incorrectAnswers].sort(
-        () => Math.random() - 0.5
-      ),
-      correctAnswer: item.correctAnswer,
-    }));
+      const formattedQuestions = data.map((item) => ({
+        question: item.question.text,
+        options: [item.correctAnswer, ...item.incorrectAnswers].sort(
+          () => Math.random() - 0.5
+        ),
+        correctAnswer: item.correctAnswer,
+      }));
 
-    setQuestions(formattedQuestions);
+      setQuestions(formattedQuestions);
+      setIsReady(true);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+    }
   };
 
   const restartQuiz = () => {
@@ -36,6 +42,7 @@ function App() {
     setUserAnswers([]);
     setScore(0);
     setQuizCompleted(false);
+    setIsReady(false);
     fetchQuestion();
   };
 
@@ -84,15 +91,8 @@ function App() {
     setCurrent(index);
   };
 
-  if (questions.length === 0) {
-    return (
-      <div
-        className="min-h-screen bg-cover bg-center flex justify-center items-center text-[#E2E4F3]"
-        style={{ backgroundImage: `url(${bgImage})` }}
-      >
-        <div className="loading-circle"></div>
-      </div>
-    );
+  if (!isReady) {
+    return null;
   }
 
   if (quizCompleted) {
@@ -123,7 +123,7 @@ function App() {
     >
       <div className="quiz-container p-12 rounded-4xl w-full max-w-[64rem]">
         <header className="flex justify-between my-10 font-bold flex-wrap">
-          <h1 className="text-5xl .vietnam-pro-bold">Country Quiz</h1>
+          <h1 className="text-5xl vietnam-pro-bold">Country Quiz</h1>
           <div className="result flex items-center bg-gradient-to-r from-[#E65895] to-[#BC6BE8] rounded-full px-4 py-2 gap-2 vietnam-pro">
             <span>🏆</span>
             <p>{score}/10 Points</p>
