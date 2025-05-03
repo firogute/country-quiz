@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import CheckIcon from "./assets/Check_round_fill.svg";
+import CrossIcon from "./assets/Close_round_fill.svg";
 import bgImage from "./assets/bg.jpg";
 
 function App() {
@@ -9,19 +11,24 @@ function App() {
   const [score, setScore] = useState(0);
 
   const fetchQuestion = async () => {
-    const response = await fetch(
-      "https://the-trivia-api.com/v2/questions?limit=10&categories=geography"
-    );
+    try {
+      const response = await fetch(
+        "https://the-trivia-api.com/v2/questions?limit=10&categories=geography"
+      );
+      const data = await response.json();
 
-    const data = await response.json();
+      const formattedQuestions = data.map((item) => ({
+        question: item.question.text,
+        options: [item.correctAnswer, ...item.incorrectAnswers].sort(
+          () => Math.random() - 0.5
+        ),
+        correctAnswer: item.correctAnswer,
+      }));
 
-    const formattedQuestions = data.map((item) => ({
-      question: item.question.text,
-      options: [item.correctAnswer, ...item.incorrectAnswers],
-      correctAnswer: item.correctAnswer,
-    }));
-
-    setQuestions(formattedQuestions);
+      setQuestions(formattedQuestions);
+    } catch (e) {
+      console.error(e.message);
+    }
   };
 
   useEffect(() => {
@@ -38,12 +45,21 @@ function App() {
       setScore((prevScore) => prevScore + 1);
     }
 
-    setUserAnswers((prevAnswers) => [...prevAnswers, { questions }]);
+    setUserAnswers((prevAnswers) => [
+      ...prevAnswers,
+      { questionIndex: current, selectedOption, isCorrect },
+    ]);
 
-    if (current < questions.length - 1) {
-      setCurrent((prevCurrent) => prevCurrent + 1);
-    }
+    setTimeout(() => {
+      if (current < questions.length - 1) {
+        setCurrent((prevCurrent) => prevCurrent + 1);
+      }
+    }, 700);
   };
+
+  const currentQuestionAnswered = userAnswers.some(
+    (answer) => answer.questionIndex === current
+  );
 
   return (
     <>
@@ -100,11 +116,52 @@ function App() {
                   exit={{ opacity: 0, x: 40 }}
                   transition={{ duration: 0.4 }}
                 >
-                  {questions[current].options.map((option, i) => (
-                    <button key={i} onClick={() => handleAnswer(option)}>
-                      {option}
-                    </button>
-                  ))}
+                  {questions[current].options.map((option, i) => {
+                    const isCorrectAnswer =
+                      option === questions[current].correctAnswer;
+                    const userAnswer = userAnswers.find(
+                      (a) => a.questionIndex === current
+                    );
+                    const isSelected = userAnswer?.selectedOption === option;
+                    const showCorrectIcon =
+                      currentQuestionAnswered && isCorrectAnswer;
+                    const showIncorrectIcon = isSelected && !isCorrectAnswer;
+
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => handleAnswer(option)}
+                        disabled={currentQuestionAnswered}
+                        className={`text-left transition-colors px-5 py-4 rounded-xl ${
+                          currentQuestionAnswered
+                            ? isCorrectAnswer
+                              ? "bg-green-600"
+                              : isSelected
+                              ? "bg-red-600"
+                              : "bg-[#4F5D75]"
+                            : "bg-[#4F5D75] hover:bg-[#5c6a94]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {(showCorrectIcon ||
+                            showIncorrectIcon ||
+                            isSelected) && (
+                            <img
+                              src={
+                                showCorrectIcon ||
+                                (isSelected && isCorrectAnswer)
+                                  ? CheckIcon
+                                  : CrossIcon
+                              }
+                              alt={isCorrectAnswer ? "Correct" : "Incorrect"}
+                              className="w-5 h-5"
+                            />
+                          )}
+                          {option}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </motion.div>
               </motion.div>
             </AnimatePresence>
