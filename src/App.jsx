@@ -1,52 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import bgImage from "./assets/bg.jpg";
 
-const questions = [
-  {
-    question: "Which country is Kuala Lumpur the capital?",
-    options: ["Sweden", "Vietnam", "Malaysia", "Austria"],
-  },
-  {
-    question: "What is the capital of Japan?",
-    options: ["Seoul", "Tokyo", "Beijing", "Osaka"],
-  },
-  {
-    question: "Which country is Kuala Lumpur the capital?",
-    options: ["Sweden", "Vietnam", "Malaysia", "Austria"],
-  },
-  {
-    question: "What is the capital of Japan?",
-    options: ["Seoul", "Tokyo", "Beijing", "Osaka"],
-  },
-  {
-    question: "Which country is Kuala Lumpur the capital?",
-    options: ["Sweden", "Vietnam", "Malaysia", "Austria"],
-  },
-  {
-    question: "What is the capital of Japan?",
-    options: ["Seoul", "Tokyo", "Beijing", "Osaka"],
-  },
-  {
-    question: "Which country is Kuala Lumpur the capital?",
-    options: ["Sweden", "Vietnam", "Malaysia", "Austria"],
-  },
-  {
-    question: "What is the capital of Japan?",
-    options: ["Seoul", "Tokyo", "Beijing", "Osaka"],
-  },
-  {
-    question: "Which country is Kuala Lumpur the capital?",
-    options: ["Sweden", "Vietnam", "Malaysia", "Austria"],
-  },
-  {
-    question: "What is the capital of Japan?",
-    options: ["Seoul", "Tokyo", "Beijing", "Osaka"],
-  },
-  // Add more questions as needed...
-];
 function App() {
   const [current, setCurrent] = useState(0);
+  const [questions, setQuestions] = useState([]);
+  const [userAnswers, setUserAnswers] = useState([]);
+  const [score, setScore] = useState(0);
+
+  const fetchQuestion = async () => {
+    const response = await fetch(
+      "https://the-trivia-api.com/v2/questions?limit=10&categories=geography"
+    );
+
+    const data = await response.json();
+
+    const formattedQuestions = data.map((item) => ({
+      question: item.question.text,
+      options: [item.correctAnswer, ...item.incorrectAnswers],
+      correctAnswer: item.correctAnswer,
+    }));
+
+    setQuestions(formattedQuestions);
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+  }, []);
+
+  if (questions.length === 0) {
+    return <div>Loading...</div>;
+  }
+
+  const handleAnswer = (selectedOption) => {
+    const isCorrect = selectedOption === questions[current].correctAnswer;
+    if (isCorrect) {
+      setScore((prevScore) => prevScore + 1);
+    }
+
+    setUserAnswers((prevAnswers) => [...prevAnswers, { questions }]);
+
+    if (current < questions.length - 1) {
+      setCurrent((prevCurrent) => prevCurrent + 1);
+    }
+  };
+
   return (
     <>
       <div
@@ -54,11 +52,11 @@ function App() {
         style={{ backgroundImage: `url(${bgImage})` }}
       >
         <div className="quiz-container p-12 rounded-4xl w-full max-w-[64rem]">
-          <header className="flex justify-between my-10 font-bold">
+          <header className="flex justify-between my-10 font-bold flex-wrap">
             <h1 className="text-2xl">Country Quiz</h1>
-            <div className="result flex bg-gradient-to-r from-[#E65895] to-[#BC6BE8] rounded-full px-4 py-2">
+            <div className="result flex bg-gradient-to-r from-[#E65895] to-[#BC6BE8] rounded-full px-4 py-2 gap-2">
               <span>🏆</span>
-              <p>8/10 Points</p>
+              <p>{score}/10 Points</p>
             </div>
           </header>
           <div className="question-container bg-[#343964] py-16 px-3 rounded-2xl grid gap-8 justify-center">
@@ -70,7 +68,7 @@ function App() {
                     onClick={() => setCurrent(index)}
                     className={`cursor-pointer ${
                       current === index ? "active" : ""
-                    }`}
+                    } ${userAnswers[index] ? "active" : ""}`}
                   >
                     {index + 1}
                   </li>
@@ -85,7 +83,7 @@ function App() {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                <div className="question justify-self-center text-xl">
+                <div className="question justify-self-center text-xl text-center">
                   <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -103,7 +101,9 @@ function App() {
                   transition={{ duration: 0.4 }}
                 >
                   {questions[current].options.map((option, i) => (
-                    <button key={i}>{option}</button>
+                    <button key={i} onClick={() => handleAnswer(option)}>
+                      {option}
+                    </button>
                   ))}
                 </motion.div>
               </motion.div>
