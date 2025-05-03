@@ -111,18 +111,18 @@ function App() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex justify-center items-center text-[#E2E4F3] vietnam-pro"
+      className="min-h-screen bg-cover bg-center flex justify-center items-center text-[#E2E4F3]"
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="quiz-container p-12 rounded-4xl w-full max-w-[64rem]">
         <header className="flex justify-between my-10 font-bold flex-wrap">
-          <h1 className="text-2xl">Country Quiz</h1>
-          <div className="result flex bg-gradient-to-r from-[#E65895] to-[#BC6BE8] rounded-full px-4 py-2 gap-2">
+          <h1 className="text-5xl .vietnam-pro-bold">Country Quiz</h1>
+          <div className="result flex items-center bg-gradient-to-r from-[#E65895] to-[#BC6BE8] rounded-full px-4 py-2 gap-2 vietnam-pro">
             <span>🏆</span>
             <p>{score}/10 Points</p>
           </div>
         </header>
-        <div className="question-container bg-[#343964] py-16 px-3 rounded-2xl grid gap-8 justify-center">
+        <div className="question-container bg-[#343964] py-16 px-3 rounded-2xl grid gap-8 justify-center vietnam-pro">
           <div className="question-numbers">
             <ul className="flex gap-3 flex-wrap justify-center">
               {questions.map((_, index) => (
